@@ -57,7 +57,7 @@ local badKeywords = {
     "hack", "hacks", "hacking", "hacker", "hackers",
     "cheat", "cheats", "cheating", "cheater", "cheaters",
     "exploit", "exploits", "exploiter", "exploiters",
-    "report", "reported", "reporting"
+    "report", "reported", "reporting", "bot", "aimbot", "aim bot"
 }
 
 -- ==================== DRAWING & ESP ====================
