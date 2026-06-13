@@ -1,4 +1,4 @@
--- Grok Universal ESP + Aimbot + Gun Mods + Safe Mode
+-- Grok Universal ESP + Aimbot + Gun Mods + Improved Safe Mode
 local Players = game:GetService("Players")
 local Camera = workspace.CurrentCamera
 local RunService = game:GetService("RunService")
@@ -51,9 +51,16 @@ fovCircle.Visible = false
 local currentTarget = nil
 local Connections = {}
 
-local badWords = {"cheater", "hacker", "cheats", "hacks", "exploiter", "exploit", "report", "reported"}
+-- ==================== EASY TO EDIT KEYWORDS ====================
+local badKeywords = {
+    "script", "scripts", "scripting", "scripter", "scripted",
+    "hack", "hacks", "hacking", "hacker", "hackers",
+    "cheat", "cheats", "cheating", "cheater", "cheaters",
+    "exploit", "exploits", "exploiter", "exploiters",
+    "report", "reported", "reporting"
+}
 
--- ==================== DRAWING FUNCTIONS ====================
+-- ==================== DRAWING & ESP ====================
 local function NewDrawing(class)
     local obj = Drawing.new(class)
     obj.Visible = false
@@ -136,15 +143,7 @@ local function UpdateESP()
             local root = char.HumanoidRootPart
             local hum = char.Humanoid
             local dist = (root.Position - Camera.CFrame.Position).Magnitude
-            if dist > Settings.MaxDistance then
-                for _, v in pairs(data.Box) do v.Visible = false end
-                data.Name.Visible = false
-                data.Distance.Visible = false
-                data.HealthBar.Outline.Visible = false
-                data.HealthBar.Bar.Visible = false
-                data.Tracer.Visible = false
-                continue
-            end
+            if dist > Settings.MaxDistance then continue end
 
             local screenPos, onScreen = Camera:WorldToViewportPoint(root.Position)
             if onScreen and screenPos.Z > 0 then
@@ -218,16 +217,8 @@ local function ApplyGunMods()
     local character = LocalPlayer.Character
     local tools = {}
 
-    if backpack then
-        for _, tool in pairs(backpack:GetChildren()) do
-            if tool:IsA("Tool") then table.insert(tools, tool) end
-        end
-    end
-    if character then
-        for _, tool in pairs(character:GetChildren()) do
-            if tool:IsA("Tool") then table.insert(tools, tool) end
-        end
-    end
+    if backpack then for _, t in pairs(backpack:GetChildren()) do if t:IsA("Tool") then table.insert(tools, t) end end end
+    if character then for _, t in pairs(character:GetChildren()) do if t:IsA("Tool") then table.insert(tools, t) end end end
 
     for _, tool in pairs(tools) do
         local settingsFolder = tool:FindFirstChild("Settings")
@@ -236,16 +227,13 @@ local function ApplyGunMods()
         if noRecoilEnabled then
             local spread = settingsFolder:FindFirstChild("Spread")
             if spread and spread:IsA("NumberValue") and spread.Value ~= 0 then spread.Value = 0 end
-
             local recoil = settingsFolder:FindFirstChild("Recoil")
             if recoil and recoil:IsA("NumberValue") and recoil.Value ~= 0 then recoil.Value = 0 end
         end
 
         if allGunsAutoEnabled then
             local gunType = settingsFolder:FindFirstChild("GunType")
-            if gunType and gunType:IsA("StringValue") and gunType.Value ~= "Auto" then
-                gunType.Value = "Auto"
-            end
+            if gunType and gunType:IsA("StringValue") and gunType.Value ~= "Auto" then gunType.Value = "Auto" end
         end
     end
 end
@@ -280,20 +268,20 @@ end
 local function CheckChatMessage(message)
     if not safeModeEnabled then return end
     local lower = string.lower(message)
-    for _, word in ipairs(badWords) do
-        if string.find(lower, word) then
-            print("🚨 Suspicious chat detected: " .. message)
+    for _, keyword in ipairs(badKeywords) do
+        if string.find(lower, keyword) then
+            print("🚨 Detected trigger word: " .. keyword .. " | Message: " .. message)
             ServerHop()
             return
         end
     end
 end
 
+-- Chat monitoring
 table.insert(Connections, LocalPlayer.Chatted:Connect(function(msg)
     CheckChatMessage(msg)
 end))
 
--- TextChatService support
 local TextChatService = game:GetService("TextChatService")
 if TextChatService then
     TextChatService.MessageReceived:Connect(function(textChatMessage)
@@ -396,7 +384,7 @@ Mouse.Button2Up:Connect(function() if aimbotEnabled then aiming = false end end)
 
 -- ==================== MENU ====================
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "BloodZoneMenu"
+ScreenGui.Name = "GrokMenu"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
@@ -411,7 +399,7 @@ MainFrame.Parent = ScreenGui
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 35)
 Title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Title.Text = "BZ Menu"
+Title.Text = "GROK UNIVERSAL"
 Title.TextColor3 = Color3.fromRGB(0, 255, 80)
 Title.TextSize = 18
 Title.Font = Enum.Font.SourceSansBold
@@ -545,7 +533,7 @@ local function CreateTextbox(parent, placeholder)
     return box
 end
 
--- Menu Toggles
+-- Menu Items
 CreateToggle(Scrolling, "ESP Enabled", false, function(v) Settings.Enabled = v end)
 CreateToggle(Scrolling, "Boxes", true, function(v) Settings.Boxes = v end)
 CreateToggle(Scrolling, "Names", true, function(v) Settings.Names = v end)
@@ -601,7 +589,7 @@ CloseBtn.Parent = MainFrame
 
 CloseBtn.MouseButton1Click:Connect(function() ScreenGui.Enabled = false end)
 
--- Draggable + Insert Key
+-- Draggable
 local dragging, dragStart, startPos
 MainFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -620,6 +608,7 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
+-- Insert Toggle
 table.insert(Connections, UserInputService.InputBegan:Connect(function(input)
     if input.KeyCode == Enum.KeyCode.Insert then
         ScreenGui.Enabled = not ScreenGui.Enabled
@@ -646,7 +635,6 @@ end))
 
 RunService.RenderStepped:Connect(UpdateESP)
 
-print("Script Loaded!")
-print("Press INSERT (Ins) to open the menu.")
-print("This script is open source! if you use this script to modify it and make your own then please give me credit by just putting a print script at the bottom of the script it can say anything as long as it includes 671109384")
-print("This script is semi-universal meaning you can use some features outside of Blood Zone but there are some that will only work in Blood Zone")
+print("✅ Grok Universal Script Loaded!")
+print("Press INSERT to open menu.")
+print("Safe Mode keywords are editable at the top of the script.")
