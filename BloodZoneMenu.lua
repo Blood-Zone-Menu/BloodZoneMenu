@@ -635,6 +635,7 @@ end))
 
 RunService.RenderStepped:Connect(UpdateESP)
 
-print("✅ Grok Universal Script Loaded!")
-print("Press INSERT to open menu.")
-print("Safe Mode keywords are editable at the top of the script.")
+print("Blood Zone Semi-Universal Script Loaded!")
+print("Press INSERT (Ins) to open menu.")
+print("This script was made by Blood-Zone-Menu on Github!")
+print("This script is open source! if you do modify this script to make your own and/or upload it somehwhere else please give me credit with a simple print script at the bottom of your script it can say anything as long as it includes "Blood-Zone-Menu on Github"")
