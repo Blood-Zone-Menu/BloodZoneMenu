@@ -384,7 +384,7 @@ Mouse.Button2Up:Connect(function() if aimbotEnabled then aiming = false end end)
 
 -- ==================== MENU ====================
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "GrokMenu"
+ScreenGui.Name = "BloodZoneMenu"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
@@ -399,7 +399,7 @@ MainFrame.Parent = ScreenGui
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 35)
 Title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Title.Text = "GROK UNIVERSAL"
+Title.Text = "BZ Menu"
 Title.TextColor3 = Color3.fromRGB(0, 255, 80)
 Title.TextSize = 18
 Title.Font = Enum.Font.SourceSansBold
@@ -638,4 +638,4 @@ RunService.RenderStepped:Connect(UpdateESP)
 print("Blood Zone Semi-Universal Script Loaded!")
 print("Press INSERT (Ins) to open menu.")
 print("This script was made by Blood-Zone-Menu on Github!")
-print("This script is open source! if you do modify this script to make your own and/or upload it somehwhere else please give me credit with a simple print script at the bottom of your script it can say anything as long as it includes "Blood-Zone-Menu on Github"")
+print("This script is open source! if you do modify this script to make your own and/or upload it somehwhere else please give me credit with a simple print script at the bottom of your script it can say anything as long as it includes Blood-Zone-Menu on Github")
